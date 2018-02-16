@@ -6,6 +6,7 @@ import glob
 import re
 import os.path
 import color
+import fnmatch
 
 class File():
     ''' File class '''
@@ -202,10 +203,14 @@ def check_trailing_spaces(_file):
         nb_line += 1
     return
 
+
 def is_comment(line):
+    ''' Checks if line is a comment '''
     return line.startswith("//") or line.startswith("/*") or line.startswith("*/") or line.startswith("**")
 
+
 def check_useless_files():
+    ''' Checks useless files in dir/subdir '''
     useless = [".c", ".h", ".hpp", ".cpp", "Makefile"]
     files = glob.glob("./**/*", recursive=True)
 
@@ -221,6 +226,27 @@ def check_useless_files():
             print("\t{} - {}".format(color.BLUE, _file))
     return nb
         
+def check_funcion_lines(_file):
+    ''' Checks number of line in function '''
+
+    nb_line = 1;
+    count = 0
+    search = False
+    for line in _file.get_content():
+        if re.search(r"^{.*$", line):
+            search = True
+            count = 1
+        if re.search(r"^}.*", line):
+            search = False
+        if search:
+            count += 1
+        nb_line += 1
+        if count > 20:
+            search = False
+            count = 1
+            _file._err += 1
+            display_err("More than 20 lines in a function", nb_line, _file.get_name())
+
 
 def moulilol():
     ''' Moulilol '''
@@ -239,6 +265,7 @@ def moulilol():
             check_keyword_space(_file)
             check_if_else(_file)
             check_op_space(_file)
+            check_funcion_lines(_file)
         check_epitech_header(_file)
         check_coma_spaces(_file)
         check_trailing_spaces(_file)

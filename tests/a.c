@@ -15,7 +15,9 @@ int main()
 }
 
 int a()
-{}
+{
+
+}
 {
 	
 }
@@ -32,4 +34,33 @@ a ==b
 a== b
 if(1 == 0) {
 	lol
+}
+
+int lol()
+{
+	a
+	be16toh
+	be16toh
+	be16toh
+	be16toh
+	be16toh
+	be16toh
+	be16toh
+	be16toh
+
+	be16toh
+	be16toh
+	be16toh
+	be16toh
+	be16toh
+	be16tohb
+	b
+	b
+	b
+	b
+	b
+	b
+	be16tohb
+	be16tohb
+	b
 }
