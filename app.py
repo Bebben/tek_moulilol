@@ -206,7 +206,7 @@ def is_comment(line):
     return line.startswith("//") or line.startswith("/*") or line.startswith("*/") or line.startswith("**")
 
 def check_useless_files():
-    useless = [".c", ".h", ".hpp", ".cpp"]
+    useless = [".c", ".h", ".hpp", ".cpp", "Makefile"]
     files = glob.glob("./**/*", recursive=True)
 
     to_del = []
