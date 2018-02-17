@@ -1,15 +1,15 @@
 #!/usr/bin/python3
-
-''' ! Coding Style Checker ! '''
+""" ! Coding Style Checker ! """
 
 import glob
 import re
 import os.path
 import color
-import fnmatch
+# import fnmatch
 
-class File():
-    ''' File class '''
+
+class File:
+    """  File class """
 
     def __init__(self, name):
         self._name = name
@@ -20,49 +20,44 @@ class File():
         self._type = "SOURCE" if self._ext in [".c", ".cpp"] else "HEADER"
         self._err = 0
 
-
     def get_name(self):
-        ''' @returns: name '''
+        """ @returns: name """
         return self._name
 
-
     def get_content(self):
-        ''' @returns: content '''
+        """ @returns: content """
         return self._content
 
-
     def get_full_content(self):
-        ''' @returns: full content '''
+        """ @returns: full content """
         return self._full_content
 
-
     def get_ext(self):
-        ''' @returns: extension of file '''
+        """ @returns: extension of file """
         return self._ext
 
-
     def get_type(self):
-        ''' @returns: type of file '''
+        """ @returns: type of file """
         return self._type
 
     def get_nb_err(self):
-        ''' @returns: number of error '''
+        """ @returns: number of error """
         return self._err
 
 
 def get_files(ext):
-    '''
+    """
     Gets all *.ext files in current dir/subdir.
 
     @returns: list of files
-    '''
+    """
 
     return [filename for filename in glob.iglob("./**/*.{}".format(ext),
                                                 recursive=True)]
 
 
 def check_columns(_file):
-    ''' Checks lenght of a line '''
+    """ Checks lenght of a line """
 
     nb_line = 1
     for line in _file.get_content():
@@ -77,7 +72,7 @@ def check_columns(_file):
 
 
 def check_nb_functions(_file):
-    ''' Checks number of functions in a file '''
+    """ Checks number of functions in a file """
 
     nb_fc = 0
     for line in _file.get_content():
@@ -91,7 +86,7 @@ def check_nb_functions(_file):
 
 
 def check_epitech_header(_file):
-    ''' Checks epitech header '''
+    """ Checks epitech header """
 
     if not re.search("..\n.. EPITECH PROJECT, [0-9]{4}\n...*\n.. File description:\n...*\n..",
                      _file.get_full_content()):
@@ -100,21 +95,22 @@ def check_epitech_header(_file):
               .format(color.BLUE, _file.get_name()))
     return
 
+
 def check_pointers(_file):
-    ''' Checks pointers location '''
+    """ Checks pointers location """
 
     nb_line = 1
     for line in _file.get_content():
-        match = re.search(r"(int|signed|unsigned|char|long|short|float|double|void|const|struct)\*.*"
-                          , line)
+        match = re.search(r"(int|signed|unsigned|char|long|short|float|double|void|const|struct)\*.*", line)
         if match:
             _file._err += 1
             display_err("Missplaced pointer *", nb_line, _file.get_name(), match.group())
         nb_line += 1
     return
 
+
 def check_keyword_space(_file):
-    ''' Checks space after keyword '''
+    """ Checks space after keyword """
 
     nb_line = 1
     for line in _file.get_content():
@@ -127,7 +123,7 @@ def check_keyword_space(_file):
 
 
 def display_err(msg, nb_line, filename, err=None):
-    ''' Display error coding style '''
+    """ Display error coding style """
 
     if err:
         print(color.RED, " - {}\
@@ -141,7 +137,7 @@ def display_err(msg, nb_line, filename, err=None):
 
 
 def check_if_else(_file):
-    ''' Checks if's forest '''
+    """ Checks if's forest """
 
     count = 0
     nb_line = 1
@@ -159,7 +155,7 @@ def check_if_else(_file):
 
 
 def check_coma_spaces(_file):
-    ''' Checks spaces around comas. '''
+    """ Checks spaces around comas. """
 
     nb_line = 1
     for line in _file.get_content():
@@ -172,7 +168,7 @@ def check_coma_spaces(_file):
 
 
 def check_op_space(_file):
-    ''' Checks spaces around operator. '''
+    """ Checks spaces around operator. """
 
     return
     operators = ['==', '=', '+', '-', '%', '!=', '<', '>', '<=', '>=', '&&', '||', '+=', '-=', '*=', '/=']
@@ -180,8 +176,8 @@ def check_op_space(_file):
     for line in _file.get_content():
         for ope in operators:
             re_str = "([^ ]{}[^ ])|([^ ]{} )|( {}[^ ])".format(ope, ope, ope)
-            a = re.compile(re_str)
-            match = a.search(line)
+            res = re.compile(re_str)
+            match = res.search(line)
             if match:
                 _file._err += 1
                 display_err("Missing spaces around operator", nb_line, _file.get_name(), match.group())
@@ -190,7 +186,7 @@ def check_op_space(_file):
 
 
 def check_trailing_spaces(_file):
-    ''' Checks trailing spaces '''
+    """ Checks trailing spaces """
 
     nb_line = 1
     for line in _file.get_content():
@@ -205,12 +201,12 @@ def check_trailing_spaces(_file):
 
 
 def is_comment(line):
-    ''' Checks if line is a comment '''
+    """ Checks if line is a comment """
     return line.startswith("//") or line.startswith("/*") or line.startswith("*/") or line.startswith("**")
 
 
 def check_useless_files():
-    ''' Checks useless files in dir/subdir '''
+    """ Checks useless files in dir/subdir """
     useless = [".c", ".h", ".hpp", ".cpp", "Makefile"]
     files = glob.glob("./**/*", recursive=True)
 
@@ -225,11 +221,12 @@ def check_useless_files():
         for _file in files:
             print("\t{} - {}".format(color.BLUE, _file))
     return nb
-        
-def check_funcion_lines(_file):
-    ''' Checks number of line in function '''
 
-    nb_line = 1;
+
+def check_funcion_lines(_file):
+    """ Checks number of line in function """
+
+    nb_line = 1
     count = 0
     search = False
     for line in _file.get_content():
@@ -249,7 +246,7 @@ def check_funcion_lines(_file):
 
 
 def moulilol():
-    ''' Moulilol '''
+    """ Moulilol """
 
     files = get_files("c") + get_files("h") + get_files("hpp") + get_files("cpp")
     final = 0
