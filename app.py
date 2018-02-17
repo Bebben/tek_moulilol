@@ -170,17 +170,16 @@ def check_coma_spaces(_file):
 def check_op_space(_file):
     """ Checks spaces around operator. """
 
-    return
-    operators = ['==', '=', '+', '-', '%', '!=', '<', '>', '<=', '>=', '&&', '||', '+=', '-=', '*=', '/=']
+    operators = ['==', '!=', '\<=', '\>=', '&&', '\|\|', '\+=', '-=', '\*=', '/=', '=', '\+', '-', '%', '\<', '\>']
     nb_line = 1
+    re_str = "|".join(["([^ ]{}[^ ])|([^ ]{} )|( {}[^ ])".format(ope, ope, ope) for ope in operators])
+
     for line in _file.get_content():
-        for ope in operators:
-            re_str = "([^ ]{}[^ ])|([^ ]{} )|( {}[^ ])".format(ope, ope, ope)
-            res = re.compile(re_str)
-            match = res.search(line)
-            if match:
-                _file._err += 1
-                display_err("Missing spaces around operator", nb_line, _file.get_name(), match.group())
+        res = re.compile(re_str)
+        match = res.search(line)
+        if match and match.group().lstrip() not in operators:
+            _file._err += 1
+            display_err("Missing spaces around operator", nb_line, _file.get_name(), match.group())
         nb_line += 1
     return
 
