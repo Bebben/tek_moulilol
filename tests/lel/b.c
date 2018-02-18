@@ -24,4 +24,5 @@ int main()
 	}
 	return (0);
 	a=0;
+	a !=b
 }

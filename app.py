@@ -167,19 +167,34 @@ def check_coma_spaces(_file):
     return
 
 
+def get_op_list():
+    """ Create and return operators list """
+
+    operators = ['==', '!=', '<=', '>=', '&&', '\|\|', '\+=', '-=', '\*=', '/=', '=', '\+', '-', '<', '>']
+    return operators, "|".join(["([^ ]{}[^ ])|([^ ]{} )|( {}[^ ])".format(ope, ope, ope) for ope in operators])
+
+
+def is_an_error(line):
+    """ Check if is an error """
+
+    return re.compile("(\w[+|-]{2})|([+|']{2}\w)|(\w\->)").search(line)
+
 def check_op_space(_file):
     """ Checks spaces around operator. """
 
-    operators = ['==', '!=', '\<=', '\>=', '&&', '\|\|', '\+=', '-=', '\*=', '/=', '=', '\+', '-', '%', '\<', '\>']
+    operators, re_str = get_op_list()
     nb_line = 1
-    re_str = "|".join(["([^ ]{}[^ ])|([^ ]{} )|( {}[^ ])".format(ope, ope, ope) for ope in operators])
 
     for line in _file.get_content():
         res = re.compile(re_str)
         match = res.search(line)
-        if match and match.group().lstrip() not in operators:
-            _file._err += 1
-            display_err("Missing spaces around operator", nb_line, _file.get_name(), match.group())
+        match_str = match.group().replace("\n", "").lstrip().rstrip() if match else "=="
+        if not is_comment(line.lstrip()) and match_str not in operators and '\\' + match_str not in operators:
+            if ["++" in match_str or "--" in match_str or "->" in match_str] and is_an_error(match_str):
+                pass
+            else:
+                _file._err += 1
+                display_err("Missing spaces around operator", nb_line, _file.get_name(), match_str)
         nb_line += 1
     return
 
@@ -201,7 +216,7 @@ def check_trailing_spaces(_file):
 
 def is_comment(line):
     """ Checks if line is a comment """
-    return line.startswith("//") or line.startswith("/*") or line.startswith("*/") or line.startswith("**")
+    return line.startswith("//") or line.startswith("/*") or line.startswith("*/") or line.startswith("**") or line.startswith("#")
 
 
 def check_useless_files():
