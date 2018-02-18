@@ -25,4 +25,5 @@ int main()
 	return (0);
 	a=0;
 	a !=b
+	for (int i =0 ; ; )
 }

@@ -213,6 +213,15 @@ def check_trailing_spaces(_file):
         nb_line += 1
     return
 
+def check_for_loop(_file):
+    """ Check for loop format """
+
+    for nb_line, line in enumerate(_file.get_content()):
+        if "for" in line and not re.compile("(for \(.* ;( .* | ); .*\))").search(line):
+            _file._err += 1
+            display_err("Wrong for loop format", nb_line, _file.get_name(), line.lstrip())
+    return
+
 
 def is_comment(line):
     """ Checks if line is a comment """
@@ -237,7 +246,7 @@ def check_useless_files():
     return nb
 
 
-def check_funcion_lines(_file):
+def check_function_lines(_file):
     """ Checks number of line in function """
 
     nb_line = 1
@@ -276,7 +285,8 @@ def moulilol():
             check_keyword_space(_file)
             check_if_else(_file)
             check_op_space(_file)
-            check_funcion_lines(_file)
+            check_function_lines(_file)
+            check_for_loop(_file)
         check_epitech_header(_file)
         check_coma_spaces(_file)
         check_trailing_spaces(_file)
