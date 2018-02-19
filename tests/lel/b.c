@@ -25,5 +25,7 @@ int main()
 	return (0);
 	a=0;
 	a !=b
+	i++
+	++i
 	for (int i = 0 ; ; )
 }
