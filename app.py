@@ -255,13 +255,14 @@ def check_function_lines(_file):
     for line in _file.get_content():
         if re.search(r"^{.*$", line):
             search = True
-            count = 1
+            count = 0
         if re.search(r"^}.*", line):
             search = False
+            count -= 1
         if search:
             count += 1
         nb_line += 1
-        if count > 20:
+        if count > 21:
             search = False
             count = 1
             _file._err += 1
