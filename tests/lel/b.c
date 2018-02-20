@@ -27,5 +27,5 @@ int main()
 	a !=b
 	i++
 	++i
-	for (int i = 0 ; ; )
+	"for (int i = 0)"
 }
