@@ -221,7 +221,6 @@ def check_trailing_spaces(_file):
     nb_line = 1
     for line in _file.get_content():
         line = line.lstrip()
-        line = remove_strings(line)
         if not is_comment(line):
             match = re.search("(.*[ ]{1,}$)|(.*[\t]{1,}$)", line)
             if match:
