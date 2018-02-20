@@ -54,7 +54,18 @@ def get_files(ext):
 
     return [filename for filename in glob.iglob("./**/*.{}".format(ext),
                                                 recursive=True)]
+def remove_strings(line):
+    """ Remove strings in line """
 
+    try:
+        s_open = line.index('"')
+        s_close = 0
+        for i, c in enumerate(line[s_open + 1:]):
+            if line[i - 1] != '\\' and c == '"':
+                s_close = line.index('"', s_open + i)
+        return line[:s_open] + line[s_close + 1:]
+    except ValueError:
+        return line
 
 def check_columns(_file):
     """ Checks lenght of a line """
@@ -101,6 +112,7 @@ def check_pointers(_file):
 
     nb_line = 1
     for line in _file.get_content():
+        line = remove_strings(line)
         match = re.search(r"(int|signed|unsigned|char|long|short|float|double|void|const|struct)\*.*", line)
         if match:
             _file._err += 1
@@ -114,6 +126,7 @@ def check_keyword_space(_file):
 
     nb_line = 1
     for line in _file.get_content():
+        line = remove_strings(line)
         match = re.search(r"(if|else if|else|for|while|switch|return)\(.*", line)
         if match:
             _file._err += 1
@@ -143,6 +156,7 @@ def check_if_else(_file):
     nb_line = 1
     for line in _file.get_content():
         line = line.lstrip()
+        line = remove_strings(line)
         if line.startswith("if"):
             count = 1
         elif "else if" in line or "else" in line:
@@ -159,6 +173,7 @@ def check_coma_spaces(_file):
 
     nb_line = 1
     for line in _file.get_content():
+        line = remove_strings(line)
         match = re.search(r",\S", line)
         if match:
             _file._err += 1
@@ -170,7 +185,7 @@ def check_coma_spaces(_file):
 def get_op_list():
     """ Create and return operators list """
 
-    operators = ['==', '!=', '<=', '>=', '&&', '\|\|', '\+=', '-=', '\*=', '/=', '=', '\+', '-', '<', '>']
+    operators = ['==', '!=', '<=', '>=', '\|=', '&=', '&&', '\|\|', '\+=', '-=', '\*=', '/=', '=', '\+', '-', '<', '>']
     return operators, "|".join(["([^ ]{}[^ ])|([^ ]{} )|( {}[^ ])".format(ope, ope, ope) for ope in operators])
 
 
@@ -186,6 +201,7 @@ def check_op_space(_file):
     nb_line = 1
 
     for line in _file.get_content():
+        line = remove_strings(line)
         res = re.compile(re_str)
         match = res.search(line)
         match_str = match.group().replace("\n", "").lstrip().rstrip() if match else "=="
@@ -205,6 +221,7 @@ def check_trailing_spaces(_file):
     nb_line = 1
     for line in _file.get_content():
         line = line.lstrip()
+        line = remove_strings(line)
         if not is_comment(line):
             match = re.search("(.*[ ]{1,}$)|(.*[\t]{1,}$)", line)
             if match:
@@ -217,6 +234,7 @@ def check_for_loop(_file):
     """ Check for loop format """
 
     for nb_line, line in enumerate(_file.get_content()):
+        line = remove_strings(line)
         if "for" in line and not re.compile("(for \(.* ;( .* | ); .*\))").search(line):
             _file._err += 1
             display_err("Wrong for loop format", nb_line, _file.get_name(), line.lstrip().replace("\n", ""))
@@ -299,6 +317,7 @@ def moulilol():
 ---------------------------------------{}""".format(final, color.RESET))
     else:
         print(color.GREEN, "Norme OK", color.RESET)
+
 
 if __name__ == "__main__":
     moulilol()
