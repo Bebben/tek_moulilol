@@ -246,14 +246,23 @@ def is_comment(line):
     return line.startswith("//") or line.startswith("/*") or line.startswith("*/") or line.startswith("**") or line.startswith("#")
 
 
+def is_useful(file_name):
+    """ Is useful file """
+
+    useful = [".c", ".h", ".hpp", ".cpp", "Makefile"]
+    for type in useful:
+        if file_name.endswith(type):
+            return True
+    return False
+
 def check_useless_files():
     """ Checks useless files in dir/subdir """
-    useless = [".c", ".h", ".hpp", ".cpp", "Makefile"]
+
     files = glob.glob("./**/*", recursive=True)
 
     to_del = []
     for _file in files:
-        if os.path.isdir(_file) or os.path.splitext(_file)[1] in useless:
+        if os.path.isdir(_file) or is_useful(_file):
             to_del.append(_file)
     files = set(files) - set(to_del)
     nb = len(files)
