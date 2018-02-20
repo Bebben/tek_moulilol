@@ -219,7 +219,7 @@ def check_trailing_spaces(_file):
     """ Checks trailing spaces """
 
     nb_line = 1
-    for line in _file.get_content():
+    gfor line in _file.get_content():
         line = line.lstrip()
         if not is_comment(line):
             match = re.search("(.*[ ]{1,}$)|(.*[\t]{1,}$)", line)
