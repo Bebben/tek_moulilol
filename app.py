@@ -177,7 +177,7 @@ def get_op_list():
 def is_an_error(line):
     """ Check if is an error """
 
-    return re.compile("(\w[+|-]{2})|([+|']{2}\w)|(\w\->)").search(line)
+    return re.compile("(\w[+|-]{2})|([+|-]{2}\w)|(\w\->)").search(line)
 
 def check_op_space(_file):
     """ Checks spaces around operator. """
@@ -219,7 +219,7 @@ def check_for_loop(_file):
     for nb_line, line in enumerate(_file.get_content()):
         if "for" in line and not re.compile("(for \(.* ;( .* | ); .*\))").search(line):
             _file._err += 1
-            display_err("Wrong for loop format", nb_line, _file.get_name(), line.lstrip())
+            display_err("Wrong for loop format", nb_line, _file.get_name(), line.lstrip().replace("\n", ""))
     return
 
 
