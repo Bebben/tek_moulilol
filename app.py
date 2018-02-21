@@ -44,16 +44,17 @@ class File:
         """ @returns: number of error """
         return self._err
 
+    def add_err(self):
+        """ Add error """
+        self._err += 1
+
 
 def get_files(ext):
-    """
-    Gets all *.ext files in current dir/subdir.
+    """ Gets all *.ext files in current dir/subdir. @returns: list of files """
 
-    @returns: list of files
-    """
+    return [filename for filename in glob.iglob("./**/*.{}".format(ext), recursive=True)]
 
-    return [filename for filename in glob.iglob("./**/*.{}".format(ext),
-                                                recursive=True)]
+
 def remove_strings(line):
     """ Remove strings in line """
 
@@ -67,6 +68,7 @@ def remove_strings(line):
     except ValueError:
         return line
 
+
 def check_columns(_file):
     """ Checks lenght of a line """
 
@@ -75,7 +77,7 @@ def check_columns(_file):
         nb_tab = line.count("\t")
         lenght = len(line) - nb_tab + nb_tab * 8
         if lenght > 80 and not is_comment(line):
-            _file._err += 1
+            _file.add_err()
             display_err("More than 80 characters", nb_line, _file.get_name())
         nb_line += 1
     return
@@ -89,7 +91,7 @@ def check_nb_functions(_file):
         if re.match("^{", line):
             nb_fc += 1
     if nb_fc > 5:
-        _file._err += 1
+        _file.add_err()
         print(color.RED, " - More than 5 functions in the file {}{}\n"
               .format(color.BLUE, _file.get_name()))
     return
@@ -100,7 +102,7 @@ def check_epitech_header(_file):
 
     if not re.search("..\n.. EPITECH PROJECT, [0-9]{4}\n...*\n.. File description:\n...*\n..",
                      _file.get_full_content()):
-        _file._err += 1
+        _file.add_err()
         print(color.RED, " - Bad Epitech's header in the file {}{}\n"
               .format(color.BLUE, _file.get_name()))
     return
@@ -114,7 +116,7 @@ def check_pointers(_file):
         line = remove_strings(line)
         match = re.search(r"(int|signed|unsigned|char|long|short|float|double|void|const|struct)\*.*", line)
         if match:
-            _file._err += 1
+            _file.add_err()
             display_err("Missplaced pointer *", nb_line, _file.get_name(), match.group())
         nb_line += 1
     return
@@ -128,7 +130,7 @@ def check_keyword_space(_file):
         line = remove_strings(line)
         match = re.search(r"(if|else if|else|for|while|switch|return)\(.*", line)
         if match:
-            _file._err += 1
+            _file.add_err()
             display_err("Missing space after keyword",
                         nb_line, _file.get_name(), match.group())
         nb_line += 1
@@ -161,7 +163,7 @@ def check_if_else(_file):
         elif "else if" in line or "else" in line:
             count += 1
             if count > 3:
-                _file._err += 1
+                _file.add_err()
                 display_err("Too many if/else", nb_line, _file.get_name())
         nb_line += 1
     return
@@ -175,7 +177,7 @@ def check_coma_spaces(_file):
         line = remove_strings(line)
         match = re.search(r",\S", line)
         if match:
-            _file._err += 1
+            _file.add_err()
             display_err("Missing space around ','", nb_line, _file.get_name(), match.group())
         nb_line += 1
     return
@@ -191,7 +193,8 @@ def get_op_list():
 def is_an_error(line):
     """ Check if is an error """
 
-    return re.compile("(\w[+|-]{2})|([+|-]{2}\w)|(\w\->)").search(line)
+    return re.compile("(\w[+|-]{2})|([+|-]{2}\w)|(\w->)").search(line)
+
 
 def check_op_space(_file):
     """ Checks spaces around operator. """
@@ -208,7 +211,7 @@ def check_op_space(_file):
             if ["++" in match_str or "--" in match_str or "->" in match_str] and is_an_error(match_str):
                 pass
             else:
-                _file._err += 1
+                _file.add_err()
                 display_err("Missing spaces around operator", nb_line, _file.get_name(), match_str)
         nb_line += 1
     return
@@ -221,12 +224,13 @@ def check_trailing_spaces(_file):
     for line in _file.get_content():
         line = line.lstrip()
         if not is_comment(line):
-            match = re.search("(.*[ ]{1,}$)|(.*[\t]{1,}$)", line)
+            match = re.search("(.*[ ]+$)|(.*[\t]+$)", line)
             if match:
-                _file._err += 1
+                _file.add_err()
                 display_err("Trailing space at end of line", nb_line, _file.get_name(), match.group())
         nb_line += 1
     return
+
 
 def check_for_loop(_file):
     """ Check for loop format """
@@ -234,24 +238,27 @@ def check_for_loop(_file):
     for nb_line, line in enumerate(_file.get_content()):
         line = remove_strings(line)
         if "for" in line and not re.compile("(for \(.* ;( .* | ); .*\))").search(line):
-            _file._err += 1
+            _file.add_err()
             display_err("Wrong for loop format", nb_line, _file.get_name(), line.lstrip().replace("\n", ""))
     return
 
 
 def is_comment(line):
     """ Checks if line is a comment """
-    return line.startswith("//") or line.startswith("/*") or line.startswith("*/") or line.startswith("**") or line.startswith("#")
+    return (line.startswith("//") or line.startswith("/*") or
+            line.startswith("*/") or line.startswith("**") or
+            line.startswith("#"))
 
 
 def is_useful(file_name):
     """ Is useful file """
 
     useful = [".c", ".h", ".hpp", ".cpp", "Makefile"]
-    for type in useful:
-        if file_name.endswith(type):
+    for file_type in useful:
+        if file_name.endswith(file_type):
             return True
     return False
+
 
 def check_useless_files():
     """ Checks useless files in dir/subdir """
@@ -289,7 +296,7 @@ def check_function_lines(_file):
         if count > 20:
             search = False
             count = 1
-            _file._err += 1
+            _file.add_err()
             display_err("More than 20 lines in a function", nb_line, _file.get_name())
 
 
