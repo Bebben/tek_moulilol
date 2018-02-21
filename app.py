@@ -74,8 +74,7 @@ def check_columns(_file):
     for line in _file.get_content():
         nb_tab = line.count("\t")
         lenght = len(line) - nb_tab + nb_tab * 8
-        tmp = line.lstrip()
-        if lenght > 80 and not re.search(r"^\*\*|\/\*|\*\/|\/\/.*$", tmp):
+        if lenght > 80 and not is_comment(line):
             _file._err += 1
             display_err("More than 80 characters", nb_line, _file.get_name())
         nb_line += 1
