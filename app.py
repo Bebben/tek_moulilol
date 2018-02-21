@@ -5,7 +5,6 @@ import glob
 import re
 import os.path
 import color
-# import fnmatch
 
 
 class File:
