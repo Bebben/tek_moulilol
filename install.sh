@@ -1,5 +1,9 @@
 #!/bin/sh
 
-git clone https://github.com/Bebben/tek_moulilol ~/.mouli
-echo "alias mouli='~/.mouli/app.py'" >> ~/.zshrc
-echo "alias mouli='~/.mouli/app.py'" >> ~/.bashrc
+echo "TOMA FDP REDOUBLE PTN JE DOIS ALLER PRENDRE MES RIDEAUX"
+echo "alias moulilol='~/.moulilol/app.py'" >> ~/.zshrc
+echo "alias moulilol='~/.moulilol/app.py'" >> ~/.bashrc
+chmod +x ~/.moulilol/app.py
+echo "ON A MIT DES ALIAS :) :) :) :) dans .zshrc et .bashrc truc de ouf"
+echo "alias = moulilol"
+echo "pd"
