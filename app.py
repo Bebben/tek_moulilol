@@ -308,7 +308,7 @@ def check_space_tab(_file):
         line = line.replace('\t', '')
         if line[0] == ' ':
             _file.add_err()
-            display_err("Bad start indentation", nb_line, _file.get_name, line)
+            display_err("Bad start indentation", nb_line, _file.get_name(), line)
         nb_line += 1
     return
 
