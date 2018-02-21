@@ -300,6 +300,18 @@ def check_function_lines(_file):
             display_err("More than 20 lines in a function", nb_line, _file.get_name())
 
 
+def check_space_tab(_file):
+    """ Checks tabulations """ 
+
+    nb_line = 1
+    for line in _file.get_content():
+        line = line.replace('\t', '')
+        if line[0] == ' ':
+            _file.add_err()
+            display_err("Bad start indentation", nb_line, _file.get_name, line)
+        nb_line += 1
+    return
+
 def moulilol():
     """ Moulilol """
 
@@ -322,6 +334,7 @@ def moulilol():
         check_epitech_header(_file)
         check_coma_spaces(_file)
         check_trailing_spaces(_file)
+        check_space_tab(_file)
         final += _file.get_nb_err()
     final += check_useless_files()
     if final:
